@@ -13,6 +13,12 @@ func handleCommand(args []string) string {
 	switch cmd {
 	case "PING":
 		// TODO: Return "+PONG\r\n" for no args
+		if len(args) == 1 {
+			return "+PONG\r\n"
+		} else {
+			message := args[1]
+			return fmt.Sprintf("$%d\r\n%s\r\n", len(message), message)
+		}
 		// TODO: Return bulk string for PING <message>
 	}
 
