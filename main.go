@@ -7,18 +7,29 @@ import (
 	"strings"
 )
 
+func cmd_PING(args []string) string {
+	if len(args) == 1 {
+		return "+PONG\r\n"
+	} else {
+		message := args[1]
+		return encodeBulkString(message)
+	}
+}
+
+func cmd_ECHO(args []string) string {
+	res := strings.Join(args[1:], " ")
+	return encodeBulkString(res)
+}
+
 func handleCommand(args []string) string {
 	cmd := strings.ToUpper(args[0])
 
 	switch cmd {
 	case "PING":
+		return cmd_PING(args)
 		// TODO: Return "+PONG\r\n" for no args
-		if len(args) == 1 {
-			return "+PONG\r\n"
-		} else {
-			message := args[1]
-			return fmt.Sprintf("$%d\r\n%s\r\n", len(message), message)
-		}
+	case "ECHO":
+		return cmd_ECHO(args)
 		// TODO: Return bulk string for PING <message>
 	}
 
