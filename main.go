@@ -10,22 +10,28 @@ import (
 func cmd_PING(args []string) string {
 	if len(args) == 1 {
 		return "+PONG\r\n"
-	} else {
-		message := args[1]
-		return encodeBulkString(message)
 	}
+	if len(args) == 2 {
+		return encodeBulkString(args[1])
+	}
+
+	return "-ERR wrong number of arguments for 'PING' command\r\n"
 }
 
 func cmd_ECHO(args []string) string {
+	if len(args) == 1 {
+		return "-ERR wrong number of arguments for 'ECHO' command\r\n"
+	}
+
 	res := strings.Join(args[1:], " ")
 	return encodeBulkString(res)
 }
 func cmd_DOCS() string {
 	return "+OK\r\n"
 }
+
 func handleCommand(args []string) string {
 	cmd := strings.ToUpper(args[0])
-
 	switch cmd {
 	case "PING":
 		return cmd_PING(args)
