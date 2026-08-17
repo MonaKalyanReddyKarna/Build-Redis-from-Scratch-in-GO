@@ -20,7 +20,9 @@ func cmd_ECHO(args []string) string {
 	res := strings.Join(args[1:], " ")
 	return encodeBulkString(res)
 }
-
+func cmd_DOCS() string {
+	return "+OK\r\n"
+}
 func handleCommand(args []string) string {
 	cmd := strings.ToUpper(args[0])
 
@@ -31,15 +33,29 @@ func handleCommand(args []string) string {
 	case "ECHO":
 		return cmd_ECHO(args)
 		// TODO: Return bulk string for PING <message>
+	case "COMMAND":
+		if len(args) > 1 && strings.ToUpper(args[1]) == "DOCS" {
+			return cmd_DOCS()
+		}
 	}
-
 	return fmt.Sprintf("-ERR unknown command '%s'\r\n", cmd)
 }
 
 func encodeBulkString(s string) string {
 	return fmt.Sprintf("$%d\r\n%s\r\n", len(s), s)
 }
-
+func simple_string(s string) string {
+	return fmt.Sprintf("+%s\r\n", s)
+}
+func error(s string) string {
+	return fmt.Sprintf("-%s\r\n", s)
+}
+func integer(i int) string {
+	return fmt.Sprintf(":%d\r\n", i)
+}
+func bulk_string(s string) string {
+	return fmt.Sprintf("$%d\r\n%s\r\n", len(s), s)
+}
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
